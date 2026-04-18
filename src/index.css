@@ -1,0 +1,89 @@
+/* 🌍 RESET BASE */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* 🎨 LIGHT */
+:root {
+  --text: #6b7280;
+  --text-h: #111827;
+  --bg: #f9fafb;
+  --card: #ffffff;
+  --border: #e5e7eb;
+
+  --accent: #6366f1;
+
+  --shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  --radius: 10px;
+}
+
+/* 🌙 DARK */
+.dark {
+  --text: #94a3b8;
+  --text-h: #f8fafc; /* 🔥 CORRIGIDO */
+  --bg: #0b1220;
+  --card: #111827;
+  --border: #1f2937;
+
+  --accent: #6366f1;
+
+  --shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
+}
+
+/* ROOT */
+#root {
+  width: 100%;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* TEXTOS */
+h1,
+h2,
+h3 {
+  color: var(--text-h); /* 🔥 ESSENCIAL */
+  margin: 0;
+}
+
+p {
+  margin: 0;
+}
+
+/* INPUT */
+input {
+  outline: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+  color: var(--text-h);
+}
+
+/* BOTÃO */
+button {
+  cursor: pointer;
+}
+
+/* TABELA */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th {
+  color: var(--text);
+}
+
+td {
+  color: var(--text-h);
+}
+
+/* TRANSIÇÃO */
+* {
+  transition: background 0.2s, color 0.2s, border 0.2s;
+}
