@@ -2,8 +2,12 @@ import { api } from "../api/client";
 
 // 🔐 USUÁRIO LOGADO
 export const getMe = async () => {
-  const { data } = await api.get("/users/me");
-  return data ?? null;
+  try {
+    const { data } = await api.get("/users/me");
+    return data ?? null;
+  } catch {
+    return null;
+  }
 };
 
 // 📊 LISTAGEM

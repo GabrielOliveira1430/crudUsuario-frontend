@@ -1,6 +1,7 @@
 import axios, { AxiosError } from "axios";
 import type { InternalAxiosRequestConfig } from "axios";
 import { refreshTokenRequest } from "../services/auth.service";
+import { getAccessToken } from "../store/auth.store";
 
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || "http://localhost:3000/api/v1",
@@ -8,7 +9,7 @@ export const api = axios.create({
 
 // 🔐 REQUEST → token
 api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-  const token = localStorage.getItem("accessToken");
+  const token = getAccessToken();
 
   if (token) {
     config.headers = config.headers || {};
@@ -39,7 +40,11 @@ api.interceptors.response.use(
   async (error: AxiosError) => {
     const originalRequest: any = error.config;
 
-    if (!error.response || error.response.status !== 401) {
+    if (!error.response) {
+      return Promise.reject(error);
+    }
+
+    if (error.response.status !== 401) {
       return Promise.reject(error);
     }
 
@@ -65,14 +70,13 @@ api.interceptors.response.use(
 
     try {
       const refreshToken = localStorage.getItem("refreshToken");
+
       if (!refreshToken) throw new Error("Sem refresh token");
 
       const data = await refreshTokenRequest(refreshToken);
 
-      const newAccessToken =
-        data?.accessToken || data?.data?.accessToken;
-      const newRefreshToken =
-        data?.refreshToken || data?.data?.refreshToken;
+      const newAccessToken = data?.accessToken || data?.data?.accessToken;
+      const newRefreshToken = data?.refreshToken || data?.data?.refreshToken;
 
       if (!newAccessToken || !newRefreshToken) {
         throw new Error("Refresh inválido");

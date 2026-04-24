@@ -16,7 +16,7 @@ export const useLogin = () => {
   });
 };
 
-// 🔢 VERIFY 2FA (CORRIGIDO)
+// 🔢 VERIFY 2FA
 export const useVerify2FA = () => {
   const navigate = useNavigate();
   const { login } = useAuthContext();
@@ -25,15 +25,13 @@ export const useVerify2FA = () => {
     mutationFn: ({ email, code }: { email: string; code: string }) =>
       verify2FARequest(email, code),
 
-    onSuccess: async (res) => {
-      console.log("VERIFY RESPONSE:", res); // 🔥 debug
+    onSuccess: async (res: any) => {
+      console.log("VERIFY RESPONSE:", res);
 
-      // 🔥 formato correto do seu backend
       const accessToken = res?.data?.accessToken;
       const refreshToken = res?.data?.refreshToken;
 
       if (!accessToken || !refreshToken) {
-        console.error("Tokens não encontrados:", res);
         throw new Error("Tokens inválidos");
       }
 
@@ -41,7 +39,7 @@ export const useVerify2FA = () => {
 
       localStorage.removeItem("auth_email");
 
-      navigate("/dashboard");
+      navigate("/dashboard", { replace: true });
     },
   });
 };
@@ -55,7 +53,6 @@ export const useAuth = () => {
 
     if (!user) return false;
 
-    // 🔥 ADMIN bypass
     if (user.role === "ADMIN") return true;
 
     const permissions = user.permissions ?? [];

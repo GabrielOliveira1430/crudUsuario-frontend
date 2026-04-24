@@ -8,8 +8,13 @@ type Props = {
 export default function PrivateRoute({ roles }: Props) {
   const { isAuthenticated, loading, user } = useAuth();
 
+  // 🔥 evita flicker no Railway (IMPORTANTE)
   if (loading) {
-    return <p style={{ textAlign: "center" }}>Carregando...</p>;
+    return (
+      <p style={{ textAlign: "center", marginTop: 40 }}>
+        Carregando sessão...
+      </p>
+    );
   }
 
   if (!isAuthenticated) {
