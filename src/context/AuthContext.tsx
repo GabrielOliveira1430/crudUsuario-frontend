@@ -77,6 +77,10 @@ export const AuthProvider = ({ children }: Props) => {
       const response = await getMe();
       const userData = normalizeUser(response);
 
+      if (!userData) {
+        throw new Error("Usuário inválido");
+      }
+
       setUser(userData);
     } catch (error) {
       console.error("Erro ao carregar usuário após login", error);

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useVerify2FA } from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../hooks/useTheme";
+import { useAuth } from "../context/AuthContext";
 import Button from "../components/Button";
 import CodeInput from "../components/CodeInput";
 import toast from "react-hot-toast";
@@ -10,6 +11,7 @@ export default function Verify2FA() {
   const { mutate, isPending } = useVerify2FA();
   const navigate = useNavigate();
   const { theme } = useTheme();
+  const { login } = useAuth();
 
   const [code, setCode] = useState("");
 
@@ -38,6 +40,30 @@ export default function Verify2FA() {
     mutate(
       { email, code },
       {
+        onSuccess: async (data: any) => {
+          try {
+            // 🔥 IMPORTANTE: backend precisa retornar tokens aqui
+            const { accessToken, refreshToken } = data?.data || {};
+
+            if (!accessToken || !refreshToken) {
+              toast.error("Erro ao autenticar");
+              navigate("/");
+              return;
+            }
+
+            await login(accessToken, refreshToken);
+
+            localStorage.removeItem("auth_email");
+
+            toast.success("Login realizado com sucesso");
+
+            navigate("/dashboard");
+          } catch (err) {
+            toast.error("Erro ao finalizar login");
+            navigate("/");
+          }
+        },
+
         onError: () => {
           toast.error("Código inválido");
         },
@@ -50,9 +76,7 @@ export default function Verify2FA() {
       <div style={{ ...card, background: theme.colors.card }}>
         <div style={header}>
           <h1 style={title}>Verificação</h1>
-          <p style={subtitle}>
-            Digite o código enviado para seu email
-          </p>
+          <p style={subtitle}>Digite o código enviado para seu email</p>
         </div>
 
         <form style={form} onSubmit={handleSubmit}>
