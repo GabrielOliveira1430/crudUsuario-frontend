@@ -1,9 +1,9 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useVerify2FA } from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../hooks/useTheme";
-import Input from "../components/Input";
 import Button from "../components/Button";
+import CodeInput from "../components/CodeInput";
 import toast from "react-hot-toast";
 
 export default function Verify2FA() {
@@ -12,21 +12,14 @@ export default function Verify2FA() {
   const { theme } = useTheme();
 
   const [code, setCode] = useState("");
-  const inputRef = useRef<HTMLInputElement>(null);
 
   const email = localStorage.getItem("auth_email");
 
-  // 🔐 PROTEÇÃO → não entra direto
   useEffect(() => {
     if (!email) {
       navigate("/");
     }
   }, [email, navigate]);
-
-  // 🎯 auto focus
-  useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,12 +30,7 @@ export default function Verify2FA() {
       return;
     }
 
-    if (!code.trim()) {
-      toast.error("Digite o código");
-      return;
-    }
-
-    if (code.length < 4) {
+    if (code.length < 6) {
       toast.error("Código incompleto");
       return;
     }
@@ -68,12 +56,7 @@ export default function Verify2FA() {
         </div>
 
         <form style={form} onSubmit={handleSubmit}>
-          <Input
-            ref={inputRef}
-            placeholder="Código de verificação"
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-          />
+          <CodeInput value={code} onChange={setCode} />
 
           <Button loading={isPending} fullWidth>
             Verificar
@@ -125,7 +108,8 @@ const subtitle: React.CSSProperties = {
 const form: React.CSSProperties = {
   display: "flex",
   flexDirection: "column",
-  gap: 14,
+  gap: 18,
+  alignItems: "center",
 };
 
 const back: React.CSSProperties = {
