@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useVerify2FA } from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../hooks/useTheme";
@@ -12,7 +12,21 @@ export default function Verify2FA() {
   const { theme } = useTheme();
 
   const [code, setCode] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
+
   const email = localStorage.getItem("auth_email");
+
+  // 🔐 PROTEÇÃO → não entra direto
+  useEffect(() => {
+    if (!email) {
+      navigate("/");
+    }
+  }, [email, navigate]);
+
+  // 🎯 auto focus
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,6 +39,11 @@ export default function Verify2FA() {
 
     if (!code.trim()) {
       toast.error("Digite o código");
+      return;
+    }
+
+    if (code.length < 4) {
+      toast.error("Código incompleto");
       return;
     }
 
@@ -50,6 +69,7 @@ export default function Verify2FA() {
 
         <form style={form} onSubmit={handleSubmit}>
           <Input
+            ref={inputRef}
             placeholder="Código de verificação"
             value={code}
             onChange={(e) => setCode(e.target.value)}
