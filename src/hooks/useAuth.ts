@@ -26,19 +26,31 @@ export const useVerify2FA = () => {
       verify2FARequest(email, code),
 
     onSuccess: async (data) => {
-      // 🔥 compatível com backend atual OU futuro
-      const accessToken = data?.accessToken || data?.data?.accessToken;
-      const refreshToken = data?.refreshToken || data?.data?.refreshToken;
+      try {
+        console.log("VERIFY RESPONSE:", data); // 🔥 debug
 
-      if (!accessToken || !refreshToken) {
-        throw new Error("Tokens inválidos");
+        const accessToken = data?.accessToken || data?.data?.accessToken;
+        const refreshToken = data?.refreshToken || data?.data?.refreshToken;
+
+        if (!accessToken || !refreshToken) {
+          throw new Error("Tokens inválidos");
+        }
+
+        await login(accessToken, refreshToken);
+
+        localStorage.removeItem("auth_email");
+
+        navigate("/dashboard");
+      } catch (err) {
+        console.error("Erro no fluxo de login:", err);
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        navigate("/");
       }
+    },
 
-      await login(accessToken, refreshToken);
-
-      localStorage.removeItem("auth_email");
-
-      navigate("/dashboard");
+    onError: (err) => {
+      console.error("Erro 2FA:", err);
     },
   });
 };
