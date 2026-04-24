@@ -25,9 +25,10 @@ export const useVerify2FA = () => {
     mutationFn: ({ email, code }: { email: string; code: string }) =>
       verify2FARequest(email, code),
 
-    onSuccess: async (response) => {
-      const accessToken = response?.data?.accessToken;
-      const refreshToken = response?.data?.refreshToken;
+    onSuccess: async (data) => {
+      // 🔥 compatível com backend atual OU futuro
+      const accessToken = data?.accessToken || data?.data?.accessToken;
+      const refreshToken = data?.refreshToken || data?.data?.refreshToken;
 
       if (!accessToken || !refreshToken) {
         throw new Error("Tokens inválidos");
@@ -42,7 +43,7 @@ export const useVerify2FA = () => {
   });
 };
 
-// 🔥 RBAC REAL (VERSÃO SEGURA)
+// 🔥 RBAC
 export const useAuth = () => {
   const context = useAuthContext();
 
@@ -51,10 +52,8 @@ export const useAuth = () => {
 
     if (!user) return false;
 
-    // 🔥 ADMIN bypass total
     if (user.role === "ADMIN") return true;
 
-    // 🔥 garante array sempre
     const permissions = user.permissions ?? [];
 
     return permissions.includes(permission);
