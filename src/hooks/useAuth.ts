@@ -16,7 +16,7 @@ export const useLogin = () => {
   });
 };
 
-// 🔢 VERIFY 2FA
+// 🔢 VERIFY 2FA (CORRIGIDO)
 export const useVerify2FA = () => {
   const navigate = useNavigate();
   const { login } = useAuthContext();
@@ -25,32 +25,23 @@ export const useVerify2FA = () => {
     mutationFn: ({ email, code }: { email: string; code: string }) =>
       verify2FARequest(email, code),
 
-    onSuccess: async (data) => {
-      try {
-        console.log("VERIFY RESPONSE:", data); // 🔥 debug
+    onSuccess: async (res) => {
+      console.log("VERIFY RESPONSE:", res); // 🔥 debug
 
-        const accessToken = data?.accessToken || data?.data?.accessToken;
-        const refreshToken = data?.refreshToken || data?.data?.refreshToken;
+      // 🔥 formato correto do seu backend
+      const accessToken = res?.data?.accessToken;
+      const refreshToken = res?.data?.refreshToken;
 
-        if (!accessToken || !refreshToken) {
-          throw new Error("Tokens inválidos");
-        }
-
-        await login(accessToken, refreshToken);
-
-        localStorage.removeItem("auth_email");
-
-        navigate("/dashboard");
-      } catch (err) {
-        console.error("Erro no fluxo de login:", err);
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
-        navigate("/");
+      if (!accessToken || !refreshToken) {
+        console.error("Tokens não encontrados:", res);
+        throw new Error("Tokens inválidos");
       }
-    },
 
-    onError: (err) => {
-      console.error("Erro 2FA:", err);
+      await login(accessToken, refreshToken);
+
+      localStorage.removeItem("auth_email");
+
+      navigate("/dashboard");
     },
   });
 };
@@ -64,6 +55,7 @@ export const useAuth = () => {
 
     if (!user) return false;
 
+    // 🔥 ADMIN bypass
     if (user.role === "ADMIN") return true;
 
     const permissions = user.permissions ?? [];
