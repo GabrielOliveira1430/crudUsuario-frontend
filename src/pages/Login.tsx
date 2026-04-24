@@ -1,72 +1,69 @@
-import { useState } from "react";
 import { useLogin } from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../hooks/useTheme";
 import Button from "../components/Button";
+import Input from "../components/Input";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import toast from "react-hot-toast";
 
-type LoginProps = {
-  onSuccess?: (email: string) => void;
-};
+// 🔥 schema
+const schema = z.object({
+  email: z.string().email("Email inválido"),
+  password: z.string().min(6, "Senha mínima de 6 caracteres"),
+});
 
-export default function Login({ onSuccess }: LoginProps) {
+type FormData = z.infer<typeof schema>;
+
+export default function Login() {
   const { mutate, isPending } = useLogin();
   const navigate = useNavigate();
   const { theme } = useTheme();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormData>({
+    resolver: zodResolver(schema),
+  });
 
-  const handleLogin = () => {
-    if (!email.trim() || !password.trim()) {
-      alert("Preencha email e senha");
-      return;
-    }
-
-    mutate(
-      { email, password },
-      {
-        onSuccess: () => {
-          localStorage.setItem("auth_email", email);
-          onSuccess?.(email);
-          navigate("/verify-2fa");
-        },
-        onError: () => {
-          alert("Credenciais inválidas");
-        },
-      }
-    );
+  const onSubmit = (data: FormData) => {
+    mutate(data, {
+      onSuccess: () => {
+        toast.success("Código enviado!");
+        navigate("/verify-2fa");
+      },
+      onError: () => {
+        toast.error("Credenciais inválidas");
+      },
+    });
   };
 
   return (
     <div style={container}>
       <div style={{ ...card, background: theme.colors.card }}>
-        <h1 style={title}>Bem-vindo de volta</h1>
-        <p style={subtitle}>Entre na sua conta</p>
+        <h1 style={title}>Bem-vindo</h1>
 
-        <div style={form}>
-          <input
-            style={input}
+        <form style={form} onSubmit={handleSubmit(onSubmit)}>
+          <Input
             placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            error={errors.email?.message}
+            {...register("email")}
           />
 
-          <input
-            style={input}
+          <Input
             placeholder="Senha"
             type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            error={errors.password?.message}
+            {...register("password")}
           />
 
-          <Button
-            onClick={handleLogin}
-            loading={isPending}
-            fullWidth
-          >
+          <Button loading={isPending} fullWidth>
             Entrar
           </Button>
-        </div>
+        </form>
 
         <div style={links}>
           <span onClick={() => navigate("/forgot-password")} style={link}>
@@ -82,53 +79,38 @@ export default function Login({ onSuccess }: LoginProps) {
   );
 }
 
-// 🎨 estilos
-const container: React.CSSProperties = {
+// estilos
+const container = {
   height: "100vh",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-};
+} as React.CSSProperties;
 
-const card: React.CSSProperties = {
+const card = {
   width: 350,
   padding: 30,
   borderRadius: 12,
-  boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
   display: "flex",
   flexDirection: "column",
   gap: 20,
-};
+} as React.CSSProperties;
 
-const title: React.CSSProperties = {
-  textAlign: "center",
-};
+const title = { textAlign: "center" } as React.CSSProperties;
 
-const subtitle: React.CSSProperties = {
-  textAlign: "center",
-  fontSize: 14,
-  opacity: 0.7,
-};
-
-const form: React.CSSProperties = {
+const form = {
   display: "flex",
   flexDirection: "column",
   gap: 12,
-};
+} as React.CSSProperties;
 
-const input: React.CSSProperties = {
-  padding: "12px",
-  borderRadius: 8,
-  fontSize: 14,
-};
-
-const links: React.CSSProperties = {
+const links = {
   display: "flex",
   justifyContent: "space-between",
   fontSize: 13,
-};
+} as React.CSSProperties;
 
-const link: React.CSSProperties = {
+const link = {
   cursor: "pointer",
   color: "#6366f1",
-};
+} as React.CSSProperties;
