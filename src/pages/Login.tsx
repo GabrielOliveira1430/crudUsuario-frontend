@@ -8,7 +8,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
 
-// 🔥 schema
+// 🔥 schema de validação
 const schema = z.object({
   email: z.string().email("Email inválido"),
   password: z.string().min(6, "Senha mínima de 6 caracteres"),
@@ -45,6 +45,7 @@ export default function Login() {
     <div style={container}>
       <div style={{ ...card, background: theme.colors.card }}>
         <h1 style={title}>Bem-vindo</h1>
+        <p style={subtitle}>Acesse sua conta</p>
 
         <form style={form} onSubmit={handleSubmit(onSubmit)}>
           <Input
@@ -79,38 +80,47 @@ export default function Login() {
   );
 }
 
-// estilos
-const container = {
+// 🎨 estilos
+const container: React.CSSProperties = {
   height: "100vh",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-} as React.CSSProperties;
+};
 
-const card = {
+const card: React.CSSProperties = {
   width: 350,
   padding: 30,
   borderRadius: 12,
+  boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
   display: "flex",
   flexDirection: "column",
   gap: 20,
-} as React.CSSProperties;
+};
 
-const title = { textAlign: "center" } as React.CSSProperties;
+const title: React.CSSProperties = {
+  textAlign: "center",
+};
 
-const form = {
+const subtitle: React.CSSProperties = {
+  textAlign: "center",
+  fontSize: 14,
+  opacity: 0.7,
+};
+
+const form: React.CSSProperties = {
   display: "flex",
   flexDirection: "column",
   gap: 12,
-} as React.CSSProperties;
+};
 
-const links = {
+const links: React.CSSProperties = {
   display: "flex",
   justifyContent: "space-between",
   fontSize: 13,
-} as React.CSSProperties;
+};
 
-const link = {
+const link: React.CSSProperties = {
   cursor: "pointer",
   color: "#6366f1",
-} as React.CSSProperties;
+};

@@ -6,11 +6,10 @@ type Props = {
   type?: string;
   error?: string;
 
-  // 🔥 compatível com react-hook-form
-  value?: string;
+  // 🔥 react-hook-form props
+  name?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
-  name?: string;
   ref?: React.Ref<HTMLInputElement>;
 };
 
@@ -18,10 +17,9 @@ export default function Input({
   placeholder,
   type = "text",
   error,
-  value,
+  name,
   onChange,
   onBlur,
-  name,
   ref,
 }: Props) {
   const { theme } = useTheme();
@@ -44,7 +42,6 @@ export default function Input({
         style={style}
         placeholder={placeholder}
         type={type}
-        value={value}
         onChange={onChange}
         onBlur={onBlur}
       />
