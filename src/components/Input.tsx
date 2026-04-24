@@ -11,12 +11,24 @@ type Props = {
   error?: string;
 
   name?: string;
+  value?: string; // ✅ ADICIONADO (não quebra nada)
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
 };
 
 const Input = forwardRef<HTMLInputElement, Props>(
-  ({ placeholder, type = "text", error, name, onChange, onBlur }, ref) => {
+  (
+    {
+      placeholder,
+      type = "text",
+      error,
+      name,
+      value,
+      onChange,
+      onBlur,
+    },
+    ref
+  ) => {
     const { theme } = useTheme();
 
     const [showPassword, setShowPassword] = useState(false);
@@ -59,8 +71,9 @@ const Input = forwardRef<HTMLInputElement, Props>(
     return (
       <div style={wrapper}>
         <input
-          ref={ref} // 🔥 AGORA FUNCIONA COM RHF
+          ref={ref}
           name={name}
+          value={value} // ✅ agora aceita controlado
           style={style}
           placeholder={placeholder}
           type={inputType}

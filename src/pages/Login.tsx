@@ -8,7 +8,6 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
 
-// 🔥 schema de validação
 const schema = z.object({
   email: z.string().email("Email inválido"),
   password: z.string().min(6, "Senha mínima de 6 caracteres"),
@@ -34,9 +33,6 @@ export default function Login() {
   });
 
   const onSubmit = (data: FormData) => {
-    // 🔥 DEBUG (pode remover depois)
-    console.log("LOGIN DATA:", data);
-
     mutate(data, {
       onSuccess: () => {
         toast.success("Código enviado!");
@@ -51,8 +47,10 @@ export default function Login() {
   return (
     <div style={container}>
       <div style={{ ...card, background: theme.colors.card }}>
-        <h1 style={title}>Bem-vindo</h1>
-        <p style={subtitle}>Acesse sua conta</p>
+        <div style={header}>
+          <h1 style={title}>Bem-vindo</h1>
+          <p style={subtitle}>Acesse sua conta</p>
+        </div>
 
         <form style={form} onSubmit={handleSubmit(onSubmit)}>
           <Input
@@ -87,30 +85,37 @@ export default function Login() {
   );
 }
 
-// 🎨 estilos
 const container: React.CSSProperties = {
   height: "100vh",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
+  background: "linear-gradient(135deg, #6366f10f, transparent)",
 };
 
 const card: React.CSSProperties = {
-  width: 350,
-  padding: 30,
-  borderRadius: 12,
-  boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
+  width: 360,
+  padding: 32,
+  borderRadius: 14,
+  boxShadow: "0 15px 40px rgba(0,0,0,0.08)",
   display: "flex",
   flexDirection: "column",
-  gap: 20,
+  gap: 24,
+  animation: "fadeIn 0.4s ease",
+};
+
+const header: React.CSSProperties = {
+  textAlign: "center",
+  display: "flex",
+  flexDirection: "column",
+  gap: 6,
 };
 
 const title: React.CSSProperties = {
-  textAlign: "center",
+  fontSize: 24,
 };
 
 const subtitle: React.CSSProperties = {
-  textAlign: "center",
   fontSize: 14,
   opacity: 0.7,
 };
@@ -118,7 +123,7 @@ const subtitle: React.CSSProperties = {
 const form: React.CSSProperties = {
   display: "flex",
   flexDirection: "column",
-  gap: 12,
+  gap: 14,
 };
 
 const links: React.CSSProperties = {
