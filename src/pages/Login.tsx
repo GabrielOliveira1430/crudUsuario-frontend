@@ -27,9 +27,16 @@ export default function Login() {
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(schema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
   });
 
   const onSubmit = (data: FormData) => {
+    // 🔥 DEBUG (pode remover depois)
+    console.log("LOGIN DATA:", data);
+
     mutate(data, {
       onSuccess: () => {
         toast.success("Código enviado!");
