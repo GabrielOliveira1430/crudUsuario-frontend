@@ -46,6 +46,12 @@ export const getUserStats = async () => {
   );
 };
 
+// ➕ CREATE (NOVO)
+export const createUser = async (body: any) => {
+  const { data } = await api.post("/users", body);
+  return data;
+};
+
 // ✏️ UPDATE
 export const updateUser = async (id: number, body: any) => {
   const { data } = await api.put(`/users/${id}`, body);
