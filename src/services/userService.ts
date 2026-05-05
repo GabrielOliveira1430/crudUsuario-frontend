@@ -42,19 +42,19 @@ export const getUserStats = async () => {
   );
 };
 
-// 🆕 CREATE USER (AGORA CORRETO)
+// 🆕 CREATE USER (CORRETO - rota pública)
 export const createUser = async (body: any) => {
   const { data } = await api.post("/users/register", body);
   return data;
 };
 
-// ✏️ UPDATE
+// ✏️ UPDATE USER
 export const updateUser = async (id: number, body: any) => {
   const { data } = await api.put(`/users/${id}`, body);
   return data;
 };
 
-// 🔁 ROLE
+// 🔁 UPDATE ROLE
 export const updateUserRole = async (
   id: number,
   body: { role: string }
@@ -63,13 +63,13 @@ export const updateUserRole = async (
   return data;
 };
 
-// 🗑 DELETE
+// 🗑 DELETE USER
 export const deleteUser = async (id: number) => {
   const { data } = await api.delete(`/users/${id}`);
   return data;
 };
 
-// 🚀 UPGRADE
+// 🚀 UPGRADE PARA PRO
 export const upgradePlan = async () => {
   const { data } = await api.patch("/users/upgrade");
   return data;
