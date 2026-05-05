@@ -2,12 +2,8 @@ import { api } from "../api/client";
 
 // 🔐 USUÁRIO LOGADO
 export const getMe = async () => {
-  try {
-    const { data } = await api.get("/users/me");
-    return data ?? null;
-  } catch {
-    return null;
-  }
+  const { data } = await api.get("/users/me");
+  return data ?? null;
 };
 
 // 📊 LISTAGEM
@@ -46,9 +42,9 @@ export const getUserStats = async () => {
   );
 };
 
-// ➕ CREATE (NOVO)
+// 🆕 CREATE USER (AGORA CORRETO)
 export const createUser = async (body: any) => {
-  const { data } = await api.post("/users", body);
+  const { data } = await api.post("/users/register", body);
   return data;
 };
 
@@ -58,8 +54,23 @@ export const updateUser = async (id: number, body: any) => {
   return data;
 };
 
-// 🗑️ DELETE
+// 🔁 ROLE
+export const updateUserRole = async (
+  id: number,
+  body: { role: string }
+) => {
+  const { data } = await api.patch(`/users/${id}/role`, body);
+  return data;
+};
+
+// 🗑 DELETE
 export const deleteUser = async (id: number) => {
   const { data } = await api.delete(`/users/${id}`);
+  return data;
+};
+
+// 🚀 UPGRADE
+export const upgradePlan = async () => {
+  const { data } = await api.patch("/users/upgrade");
   return data;
 };
